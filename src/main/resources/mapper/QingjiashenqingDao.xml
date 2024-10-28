@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.QingjiashenqingDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.yonghu_id as yonghuId
+        ,a.qingjia_types as qingjiaTypes
+        ,a.qingjia_content as qingjiaContent
+        ,a.start_time as startTime
+        ,a.end_time as endTime
+        ,a.shenhe_types as shenheTypes
+        ,a.beizhu_content as beizhuContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.QingjiashenqingView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,yonghu.username as username
+        ,yonghu.password as password
+        ,yonghu.name as name
+        ,yonghu.sex_types as sexTypes
+        ,yonghu.id_number as idNumber
+        ,yonghu.phone as phone
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.nation as nation
+        ,yonghu.politics_types as politicsTypes
+        ,yonghu.address as address
+        ,yonghu.banji_types as banjiTypes
+        ,yonghu.nianji_types as nianjiTypes
+
+        FROM qingjiashenqing  a
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+        left join banji_kecheng_laoshi banjiKechengLaoshi ON yonghu.banji_types = banjiKechengLaoshi.banji_types
+
+        <where>
+            <if test="params.yonghuId != null">
+                and a.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test="params.qingjiaTypes != null">
+                and a.qingjia_types = #{params.qingjiaTypes}
+            </if>
+            <if test=" params.qingjiaContent != '' and params.qingjiaContent != null and params.qingjiaContent != 'null' ">
+                and a.qingjia_content like CONCAT('%',#{params.qingjiaContent},'%')
+            </if>
+            <if test=" params.startTimeStart != '' and params.startTimeStart != null ">
+                <![CDATA[  and DATE_FORMAT(a.start_time, '%Y-%m-%d %H:%T:%s') >=
+                DATE_FORMAT(#{params.startTimeStart}, '%Y-%m-%d %H:%T:%s')   ]]>
+            </if>
+            <if test=" params.startTimeEnd != '' and params.startTimeEnd != null ">
+                <![CDATA[  and DATE_FORMAT(a.start_time, '%Y-%m-%d %H:%T:%s') <=
+                DATE_FORMAT(#{params.startTimeEnd} , '%Y-%m-%d %H:%T:%s')    ]]>
+            </if>
+            <if test=" params.endTimeStart != '' and params.endTimeStart != null ">
+                <![CDATA[  and DATE_FORMAT(a.end_time, '%Y-%m-%d %H:%T:%s') >=
+                DATE_FORMAT(#{params.endTimeStart}, '%Y-%m-%d %H:%T:%s')   ]]>
+            </if>
+            <if test=" params.endTimeEnd != '' and params.endTimeEnd != null ">
+                <![CDATA[  and DATE_FORMAT(a.end_time, '%Y-%m-%d %H:%T:%s') <=
+                DATE_FORMAT(#{params.endTimeEnd} , '%Y-%m-%d %H:%T:%s')    ]]>
+            </if>
+            <if test="params.shenheTypes != null">
+                and a.shenhe_types = #{params.shenheTypes}
+            </if>
+            <if test=" params.beizhuContent != '' and params.beizhuContent != null and params.beizhuContent != 'null' ">
+                and a.beizhu_content like CONCAT('%',#{params.beizhuContent},'%')
+            </if>
+
+            <if test=" params.username != '' and params.username != null and params.username != 'null' ">
+                and yonghu.username like CONCAT('%',#{params.username},'%')
+            </if>
+            <if test=" params.password != '' and params.password != null and params.password != 'null' ">
+                and yonghu.password like CONCAT('%',#{params.password},'%')
+            </if>
+            <if test=" params.name != '' and params.name != null and params.name != 'null' ">
+                and yonghu.name like CONCAT('%',#{params.name},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and yonghu.sex_types = #{params.sexTypes}
+            </if>
+
+            <if test=" params.idNumber != '' and params.idNumber != null and params.idNumber != 'null' ">
+                and yonghu.id_number like CONCAT('%',#{params.idNumber},'%')
+            </if>
+            <if test=" params.phone != '' and params.phone != null and params.phone != 'null' ">
+                and yonghu.phone like CONCAT('%',#{params.phone},'%')
+            </if>
+            <if test=" params.nation != '' and params.nation != null and params.nation != 'null' ">
+                and yonghu.nation like CONCAT('%',#{params.nation},'%')
+            </if>
+            <if test="params.politicsTypes != null">
+                and yonghu.politics_types = #{params.politicsTypes}
+            </if>
+
+            <if test=" params.address != '' and params.address != null and params.address != 'null' ">
+                and yonghu.address like CONCAT('%',#{params.address},'%')
+            </if>
+            <if test="params.banjiTypes != null">
+                and yonghu.banji_types = #{params.banjiTypes}
+            </if>
+
+            <if test="params.nianjiTypes != null">
+                and yonghu.nianji_types = #{params.nianjiTypes}
+            </if>
+
+
+
+            <if test="params.laoshiId != null">
+                and banjiKechengLaoshi.laoshi_id = #{params.laoshiId}
+            </if>
+
+        </where>
+        order by a.id desc
+    </select>
+
+</mapper>

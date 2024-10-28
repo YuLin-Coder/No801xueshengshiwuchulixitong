@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.BanjiKechengLaoshiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.banji_types as banjiTypes
+        ,a.kecheng_types as kechengTypes
+        ,a.laoshi_id as laoshiId
+        ,a.beizhu_content as beizhuContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.BanjiKechengLaoshiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,laoshi.username as username
+        ,laoshi.password as password
+        ,laoshi.laoshi_name as laoshiName
+        ,laoshi.sex_types as sexTypes
+        ,laoshi.laoshi_id_number as laoshiIdNumber
+        ,laoshi.laoshi_phone as laoshiPhone
+        ,laoshi.laoshi_photo as laoshiPhoto
+        ,laoshi.laoshi_nation as laoshiNation
+        ,laoshi.politics_types as politicsTypes
+        ,laoshi.laoshi_address as laoshiAddress
+        ,laoshi.role_types as roleTypes
+
+        FROM banji_kecheng_laoshi  a
+        left JOIN laoshi laoshi ON a.laoshi_id = laoshi.id
+
+        <where>
+            <if test="params.banjiTypes != null">
+                and a.banji_types = #{params.banjiTypes}
+            </if>
+            <if test="params.kechengTypes != null">
+                and a.kecheng_types = #{params.kechengTypes}
+            </if>
+            <if test="params.laoshiId != null">
+                and a.laoshi_id = #{params.laoshiId}
+            </if>
+            <if test=" params.beizhuContent != '' and params.beizhuContent != null and params.beizhuContent != 'null' ">
+                and a.beizhu_content like CONCAT('%',#{params.beizhuContent},'%')
+            </if>
+
+            <if test=" params.username != '' and params.username != null and params.username != 'null' ">
+                and laoshi.username like CONCAT('%',#{params.username},'%')
+            </if>
+            <if test=" params.password != '' and params.password != null and params.password != 'null' ">
+                and laoshi.password like CONCAT('%',#{params.password},'%')
+            </if>
+            <if test=" params.laoshiName != '' and params.laoshiName != null and params.laoshiName != 'null' ">
+                and laoshi.laoshi_name like CONCAT('%',#{params.laoshiName},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and laoshi.sex_types = #{params.sexTypes}
+            </if>
+
+            <if test=" params.laoshiIdNumber != '' and params.laoshiIdNumber != null and params.laoshiIdNumber != 'null' ">
+                and laoshi.laoshi_id_number like CONCAT('%',#{params.laoshiIdNumber},'%')
+            </if>
+            <if test=" params.laoshiPhone != '' and params.laoshiPhone != null and params.laoshiPhone != 'null' ">
+                and laoshi.laoshi_phone like CONCAT('%',#{params.laoshiPhone},'%')
+            </if>
+            <if test=" params.laoshiNation != '' and params.laoshiNation != null and params.laoshiNation != 'null' ">
+                and laoshi.laoshi_nation like CONCAT('%',#{params.laoshiNation},'%')
+            </if>
+            <if test="params.politicsTypes != null">
+                and laoshi.politics_types = #{params.politicsTypes}
+            </if>
+
+            <if test=" params.laoshiAddress != '' and params.laoshiAddress != null and params.laoshiAddress != 'null' ">
+                and laoshi.laoshi_address like CONCAT('%',#{params.laoshiAddress},'%')
+            </if>
+            <if test="params.roleTypes != null">
+                and laoshi.role_types = #{params.roleTypes}
+            </if>
+
+        </where>
+        order by a.id desc
+    </select>
+
+</mapper>
